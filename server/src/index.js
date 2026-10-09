@@ -1,16 +1,18 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 const app = express();
+const usuarioRoutes = require("./routes/usuarioRoutes");
 const port = process.env.PORT ?? 3001;
-const conectarDB = require('./db/conexion');
+const conectarDB = require("./db/conexion");
 
-app.use(express.json()); 
+app.use(express.json());
 // cors solo aceptando desde el front
-app.use(cors({origin: process.env.URL_FRONT}));
+app.use(cors({ origin: process.env.URL_FRONT }));
 
+app.use("/api/usuarios", usuarioRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
 const iniciar = async () => {
@@ -22,6 +24,6 @@ const iniciar = async () => {
 };
 
 iniciar().catch((error) => {
-  console.error('No se pudo iniciar:', error.message);
+  console.error("No se pudo iniciar:", error.message);
   process.exit(1);
 });

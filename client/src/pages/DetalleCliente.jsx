@@ -6,6 +6,8 @@ import '@styles/detallecliente.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
+import clientesService from '../services/clientesService';
+
 const DetalleCliente = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
@@ -21,16 +23,8 @@ const DetalleCliente = () => {
 		setErrorCliente(false);
 		setMensajeError('');
 
-		fetch(`https://fakestoreapi.com/users/${id}`)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(
-						`No se pudo encontrar el cliente con el ID ${id}`,
-					);
-				}
-
-				return response.json();
-			})
+		clientesService
+			.obtenerClientePorId(id)
 			.then((data) => {
 				if (!data) {
 					setErrorCliente(true);
@@ -38,16 +32,14 @@ const DetalleCliente = () => {
 						`No se encontró ningún cliente asociado al ID ${id}.`,
 					);
 				} else {
-					const { ...clienteSeguro } = data;
-
-					setCliente(clienteSeguro);
+					setCliente(data);
 				}
 			})
 			.catch((error) => {
 				setErrorCliente(true);
 				setMensajeError(
-					error.message ||
-						'Error al intentar obtener los datos del cliente.',
+					error.response?.data?.mensaje ||
+						`No se pudo encontrar el cliente con el ID ${id}.`,
 				);
 			})
 			.finally(() => {
@@ -57,22 +49,16 @@ const DetalleCliente = () => {
 
 	const handleClientDeletion = async () => {
 		try {
-			const respuesta = await fetch(
-				`https://fakestoreapi.com/users/${id}`,
-				{
-					method: 'DELETE',
-				},
-			);
+			await clientesService.eliminarCliente(id);
+			setMensaje('Cliente eliminado correctamente');
 
-			if (respuesta.ok) {
-				setMensaje('Cliente eliminado correctamente');
-
-				setTimeout(() => {
-					navigate('/clientes');
-				}, 2000);
-			}
+			setTimeout(() => {
+				navigate('/clientes');
+			}, 2000);
 		} catch (error) {
-			if (error) setMensaje('Error al eliminar cliente');
+			setMensaje(
+				error.response?.data?.mensaje || 'Error al eliminar cliente',
+			);
 		}
 	};
 

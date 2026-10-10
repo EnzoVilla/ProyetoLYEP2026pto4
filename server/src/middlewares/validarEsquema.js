@@ -1,5 +1,5 @@
-const validarEsquema = (esquema) => (req, res, next) => {
-  const resultado = esquema.safeParse(req.body);
+const validarEsquema = (esquema, propiedad = 'body') => (req, res, next) => {
+  const resultado = esquema.safeParse(req[propiedad]);
 
   if (!resultado.success) {
     return res.status(400).json({
@@ -11,7 +11,7 @@ const validarEsquema = (esquema) => (req, res, next) => {
     });
   }
 
-  req.body = resultado.data;
+  req[propiedad] = resultado.data;
   next();
 };
 

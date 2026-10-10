@@ -1,4 +1,5 @@
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcryptjs');
 
 const obtenerTodos = async () => {
   return await Usuario.find();
@@ -9,7 +10,27 @@ const obtenerPorId = async (id) => {
 };
 
 const crearUsuario = async (datos) => {
-  return await Usuario.create(datos);
+  const datosUsuario = { ...datos };
+
+  if (datosUsuario.password) {
+    datosUsuario.passwordHash = await bcrypt.hash(datosUsuario.password, 12);
+    delete datosUsuario.password;
+  }
+
+  return await Usuario.create(datosUsuario);
+};
+
+const autenticarUsuario = async (email, password, sector) => {
+  const usuario = await Usuario.findOne({
+    email: email.trim().toLowerCase(),
+    sector,
+  }).select('+passwordHash');
+
+  if (!usuario || !(await bcrypt.compare(password, usuario.passwordHash))) {
+    return null;
+  }
+
+  return usuario;
 };
 
 const actualizarUsuario = async (id, datos) => {
@@ -27,6 +48,7 @@ module.exports = {
   obtenerTodos,
   obtenerPorId,
   crearUsuario,
+  autenticarUsuario,
   actualizarUsuario,
   eliminarUsuario,
 };

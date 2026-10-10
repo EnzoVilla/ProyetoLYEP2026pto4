@@ -20,4 +20,24 @@ const clienteSchema = z.object({
   phone: z.string().trim().min(1),
 });
 
-module.exports = { clienteSchema };
+const clienteUpdateSchema = z.object({
+  email: clienteSchema.shape.email.optional(),
+  username: z.string().trim().optional(),
+  name: z
+    .object({
+      firstname: z.string().trim().min(1).optional(),
+      lastname: z.string().trim().optional(),
+    })
+    .optional(),
+  address: z
+    .object({
+      city: z.string().trim().min(1).optional(),
+      street: z.string().trim().optional(),
+      number: z.string().trim().optional(),
+      zipcode: z.string().trim().optional(),
+    })
+    .optional(),
+  phone: clienteSchema.shape.phone.optional(),
+});
+
+module.exports = { clienteSchema, clienteUpdateSchema };

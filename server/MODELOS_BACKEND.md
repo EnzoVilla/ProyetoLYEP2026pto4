@@ -49,7 +49,20 @@ La eliminación también se solicita directamente a FakeStore con `DELETE` a `ht
 
 ## Usuario de autorización
 
-`autorizacionesServices.js` mantiene una lista fija en memoria. Cada objeto contiene:
+El login se realiza mediante `POST /api/usuarios/login` y recibe `email`,
+`password` y `sector`. El backend busca el usuario por email y sector,
+compara la contraseña contra `passwordHash` usando bcrypt y devuelve un JWT
+junto con los datos públicos del usuario. El token tiene una vigencia de ocho
+horas y requiere configurar `JWT_SECRET`.
+
+Para crear usuarios desde el endpoint `POST /api/usuarios`, se puede enviar la
+contraseña en el campo `password`; el backend la convierte a `passwordHash`
+antes de persistirla.
+
+El cliente consume este endpoint mediante `VITE_API_URL`, cuyo valor por
+defecto es `http://localhost:3001/api`.
+
+El mock anterior del frontend usaba objetos con esta forma:
 
 ```js
 {

@@ -12,6 +12,7 @@ const Login = () => {
 	const [password, setPassword] = useState('');
 	const [sector, setSector] = useState('');
 	const [errores, setErrores] = useState({});
+	const [errorServidor, setErrorServidor] = useState('');
 	const { setAdmin } = useAutorizaciones();
 	const navigate = useNavigate();
 	const validar = () => {
@@ -42,7 +43,7 @@ const Login = () => {
 
 		return Object.keys(nuevosErrores).length === 0;
 	};
-	const handleLoginSubmit = (
+	const handleLoginSubmit = async (
 		/** @type {{ preventDefault: () => void; }} */ event_,
 	) => {
 		event_.preventDefault();
@@ -51,21 +52,24 @@ const Login = () => {
 			return;
 		}
 
-		const usuario = AutorizacionesService.login(email, password, sector);
+		setErrorServidor('');
 
-		if (!usuario) {
-			alert('Verifique los datos');
+		try {
+			const { token, usuario } = await AutorizacionesService.login(
+				email,
+				password,
+				sector,
+			);
 
-			return;
+			localStorage.setItem('token', token);
+			setAdmin(usuario);
+			navigate('/');
+		} catch (error) {
+			setErrorServidor(
+				error.response?.data?.mensaje ??
+					'No se pudo iniciar sesión. Intente nuevamente.',
+			);
 		}
-
-		localStorage.setItem('role', usuario.sector);
-		setAdmin({
-			nombre: usuario.nombre,
-			email: usuario.email,
-			sector: usuario.sector,
-		});
-		navigate('/');
 	};
 
 	return (
@@ -107,6 +111,9 @@ const Login = () => {
 				</label>
 				<p style={{ color: 'red', minHeight: '18px' }}>
 					{errores.sector || ' '}
+				</p>
+				<p style={{ color: 'red', minHeight: '18px' }}>
+					{errorServidor || ' '}
 				</p>
 				<button type="submit">Ingresar</button>
 			</form>

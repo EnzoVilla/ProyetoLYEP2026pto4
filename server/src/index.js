@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors({ origin: process.env.URL_FRONT }));
 
 app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/clientes", clienteRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

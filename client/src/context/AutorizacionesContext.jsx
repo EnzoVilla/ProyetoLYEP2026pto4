@@ -15,10 +15,13 @@ export const AutorizacionesContext = createContext();
 const AutorizacionesProvider = ({ children }) => {
 	const [admin, setAdmin] = useState(() => {
 		const adminGuardado = localStorage.getItem('admin');
+		const token = localStorage.getItem('token');
 
-		if (adminGuardado) {
+		if (adminGuardado && token) {
 			return JSON.parse(adminGuardado);
 		}
+
+		localStorage.removeItem('admin');
 
 		return null;
 	});
@@ -33,6 +36,7 @@ const AutorizacionesProvider = ({ children }) => {
 
 	const cerrarSesion = () => {
 		setAdmin(null);
+		localStorage.removeItem('token');
 	};
 
 	return (

@@ -5,13 +5,14 @@ import '@styles/detallecliente.css';
 
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-
+import useAutorizaciones from '@hooks/useAutorizaciones';
 import clientesService from '../services/clientesService';
 
 const DetalleCliente = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const role = localStorage.getItem('role');
+	const { admin } = useAutorizaciones();
+	const role = admin?.sector;
 	const [cliente, setCliente] = useState(null);
 	const [mensaje, setMensaje] = useState('');
 	const [cargandoCliente, setCargandoCliente] = useState(true);
@@ -132,13 +133,14 @@ const DetalleCliente = () => {
 				<strong>Usuario:</strong> {cliente.username}
 			</p>
 
-			{role?.trim() === 'Gerencia' && (
-				<button
-					className="btn-eliminar"
-					onClick={handleClientDeletion}
-				>
-					Eliminar Cliente
-				</button>
+			{role === 'Gerencia' && (
+			<button
+				className="btn-eliminar"
+				type="button"
+				onClick={handleClientDeletion}
+			>
+				Eliminar Cliente
+			</button>
 			)}
 		</div>
 	);

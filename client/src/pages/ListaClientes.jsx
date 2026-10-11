@@ -8,6 +8,7 @@ import FormCliente from '@components/FormCliente';
 import ModalConfirmacion from '@components/ModalConfirmacion';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import useAutorizaciones from '@hooks/useAutorizaciones';
 
 import clientesService from '../services/clientesService';
 
@@ -19,6 +20,7 @@ const ListaClientes = () => {
 	const [errorEliminacion, setErrorEliminacion] = useState('');
 	const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 	const [modalAbierto, setModalAbierto] = useState(false);
+	const { admin } = useAutorizaciones();
 
 	useEffect(() => {
 		clientesService
@@ -140,15 +142,15 @@ const ListaClientes = () => {
 										Ver Ficha Completa
 									</Link>
 
+									{admin?.sector === 'Gerencia' && (
 									<button
 										className="btn-eliminar"
 										type="button"
-										onClick={() =>
-											abrirModalEliminar(cliente)
-										}
+										onClick={() => abrirModalEliminar(cliente)}
 									>
 										Eliminar
 									</button>
+									)}
 								</td>
 							</tr>
 						))}

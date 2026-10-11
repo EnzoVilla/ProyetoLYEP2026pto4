@@ -34,7 +34,18 @@ const autenticarUsuario = async (email, password, sector) => {
 };
 
 const actualizarUsuario = async (id, datos) => {
-  return await Usuario.findByIdAndUpdate(id, datos, {
+  const datosUsuario = { ...datos };
+
+  if (datosUsuario.password !== undefined) {
+    datosUsuario.passwordHash = await bcrypt.hash(
+      datosUsuario.password,
+      12,
+    );
+
+    delete datosUsuario.password;
+  }
+
+  return await Usuario.findByIdAndUpdate(id, datosUsuario, {
     new: true,
     runValidators: true,
   });

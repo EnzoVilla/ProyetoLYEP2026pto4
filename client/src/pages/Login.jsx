@@ -26,13 +26,7 @@ const Login = () => {
 		}
 
 		if (!password) {
-			nuevosErrores.password = 'La contraseña es obligatoria';
-		} else if (password.length < 8) {
-			nuevosErrores.password = 'Mínimo 8 caracteres';
-		} else if (!/[A-Z]/.test(password)) {
-			nuevosErrores.password = 'Debe tener una mayúscula';
-		} else if (!/[0-9]/.test(password)) {
-			nuevosErrores.password = 'Debe tener un número';
+ 			nuevosErrores.password = 'La contraseña es obligatoria';
 		}
 
 		if (!sector) {

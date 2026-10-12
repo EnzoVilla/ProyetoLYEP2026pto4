@@ -12,6 +12,17 @@ const login = async (email, password, sector) => {
 	return respuesta.data;
 };
 
+const obtenerUsuarios = async () => {
+	const respuesta = await axios.get(URL, {
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('token') ?? ''}`,
+		},
+	});
+
+	return respuesta.data;
+};
+
 export default {
 	login,
+	obtenerUsuarios,
 };
